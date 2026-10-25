@@ -90,7 +90,9 @@ def get_predefined_kernels():
         "Laplaciano": np.array([[0, -1, 0], [-1, 4, -1], [0, -1, 0]]),
         "Enfoque": np.array([[0, -1, 0], [-1, 5, -1], [0, -1, 0]]),
         "Relieve": np.array([[-2, -1, 0], [-1, 1, 1], [0, 1, 2]]),
-        "Desenfoque Gaussiano": np.array([[1, 2, 1], [2, 4, 2], [1, 2, 1]]) / 16
+        "Desenfoque Gaussiano": np.array([[1, 2, 1], [2, 4, 2], [1, 2, 1]]) / 16,
+        "Desenfoque de Movimiento (Motion Blur)": np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]]) / 3,
+        "Enfoque Agresivo (Sharpening Alto)": np.array([[-1, -1, -1], [-1, 9, -1], [-1, -1, -1]])
     }
     return kernels
 
@@ -233,16 +235,10 @@ def main():
                         st.metric("Valor mínimo", f"{np.min(convolved_image)}")
                 else:
                     # Estadísticas para color (promedio de todos los canales)
-                    if len(convolved_image.shape) == 3:
-                        mean_val = np.mean(convolved_image)
-                        std_val = np.std(convolved_image)
-                        max_val = np.max(convolved_image)
-                        min_val = np.min(convolved_image)
-                    else:
-                        mean_val = np.mean(convolved_image)
-                        std_val = np.std(convolved_image)
-                        max_val = np.max(convolved_image)
-                        min_val = np.min(convolved_image)
+                    mean_val = np.mean(convolved_image)
+                    std_val = np.std(convolved_image)
+                    max_val = np.max(convolved_image)
+                    min_val = np.min(convolved_image)
                     
                     with col1:
                         st.metric("Valor promedio", f"{mean_val:.2f}")
@@ -252,7 +248,7 @@ def main():
                         st.metric("Valor máximo", f"{max_val}")
                     with col4:
                         st.metric("Valor mínimo", f"{min_val}")
-                
+        
     # Información adicional
     with st.expander("Información sobre convolución"):
         st.markdown("""
@@ -275,6 +271,8 @@ def main():
         - **Sobel**: Detecta bordes en direcciones específicas
         - **Laplaciano**: Detecta bordes en todas las direcciones
         - **Enfoque**: Aumenta el contraste en los bordes
+        - **Desenfoque de Movimiento**: Simula arrastre de cámara en diagonal
+        - **Enfoque Agresivo**: Resalta detalles de alta frecuencia con mayor fuerza
         
         ### Consejos:
         - Kernels con suma = 1 mantienen el brillo promedio
